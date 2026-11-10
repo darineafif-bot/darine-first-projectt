@@ -1,65 +1,85 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for, abort
+from flask import Flask, render_template, request, redirect, abort, jsonify
 from datetime import datetime
+from zoneinfo import ZoneInfo
 
 app = Flask(__name__)
 
-@app.route("/")
+@app.get('/')
 def accueil():
-    return render_template("index.html", page="Accueil")
+    return render_template('accueil.html')
 
-@app.route("/bonjour")
-def bonjour():
-    return render_template("index.html", page="Bonjour", message="Bonjour et bienvenue sur mon site !")
+@app.get('/presentation')
+def presentation():
+    return render_template('presentation.html', prenom='Darine', nom='Afif', loisirs=['Aviation', 'Voyages', 'Boxe', 'Ingénierie'])
 
-@app.route("/a-propos")
-def apropos():
-    return render_template("index.html", page="À propos")
+@app.get('/loisirs')
+def loisirs():
+    return render_template('loisirs.html', loisirs=['Aviation', 'Voyages', 'Boxe', 'Ingénierie'])
 
-@app.route("/saluer")
-def saluer():
-    nom = request.args.get("nom", "visiteur").strip()[:60]
-    return render_template("index.html", page="Salutation", message=f"Bonjour {nom} !")
+@app.get('/bonjour/<path:prenom>')
+def bonjour(prenom):
+    return render_template('bonjour.html', prenom=prenom)
 
-@app.route("/contact", methods=["GET", "POST"])
-def contact():
-    message = None
-    if request.method == "POST":
-        nom = request.form.get("nom", "visiteur").strip()[:60]
-        texte = request.form.get("message", "").strip()[:500]
-        message = f"Merci {nom} ! Votre message a été reçu pour cette démonstration : {texte}"
-    return render_template("index.html", page="Formulaire", message=message)
+@app.get('/calcul')
+def calcul():
+    try:
+        a = int(request.args.get('a', 0))
+        b = int(request.args.get('b', 0))
+    except (ValueError, TypeError):
+        return render_template('calcul.html', erreur='Veuillez entrer deux nombres entiers.'), 400
+    op = request.args.get('op', 'plus')
+    if op == 'fois':
+        resultat, symbole = a * b, '×'
+    elif op == 'moins':
+        resultat, symbole = a - b, '−'
+    elif op == 'plus':
+        resultat, symbole = a + b, '+'
+    else:
+        return render_template('calcul.html', erreur='Opération inconnue.'), 400
+    return render_template('calcul.html', a=a, b=b, resultat=resultat, symbole=symbole, op=op)
 
-@app.route("/interdit")
-def interdit():
+@app.get('/formulaire')
+def formulaire():
+    return render_template('formulaire.html')
+
+@app.route('/salut', methods=['GET', 'POST'])
+def salut():
+    valeurs = request.form if request.method == 'POST' else request.args
+    prenom = valeurs.get('prenom', 'inconnu')[:80]
+    ville = valeurs.get('ville', 'nulle part')[:80]
+    couleur = valeurs.get('couleur', 'teal')
+    if couleur not in ('tomato', 'teal', 'royalblue'):
+        couleur = 'teal'
+    return render_template('salut.html', prenom=prenom, ville=ville, couleur=couleur, methode=request.method)
+
+@app.get('/home')
+def home():
+    return redirect('/')
+
+@app.get('/secret')
+def secret():
     abort(403)
 
-@app.route("/introuvable")
-def introuvable():
-    abort(404)
-
-@app.route("/redirection")
-def redirection():
-    return redirect(url_for("accueil"))
-
-@app.route("/infos")
-def infos():
-    headers = {"User-Agent": request.headers.get("User-Agent", "Inconnu"),
-               "Accept-Language": request.headers.get("Accept-Language", "Inconnu"),
-               "Méthode HTTP": request.method,
-               "Adresse IP (proxy éventuel)": request.remote_addr}
-    return render_template("index.html", page="Informations HTTP", headers=headers)
-
-@app.route("/api/bonjour")
-def api_bonjour():
-    return jsonify(message="Bonjour depuis l'API Flask !", date=datetime.now().isoformat(timespec="seconds"), succes=True)
-
 @app.errorhandler(403)
-def error403(error):
-    return render_template("index.html", page="Erreur 403", message="403 : accès interdit."), 403
+def page_interdite(error):
+    return render_template('403.html'), 403
 
 @app.errorhandler(404)
-def error404(error):
-    return render_template("index.html", page="Erreur 404", message="404 : cette page n'existe pas."), 404
+def page_introuvable(error):
+    return render_template('404.html'), 404
 
-if __name__ == "__main__":
-    app.run(debug=True)
+@app.get('/moi')
+def moi():
+    return render_template('moi.html', ip=request.headers.get('X-Real-IP', request.remote_addr), navigateur=request.headers.get('User-Agent', ''), langues=request.headers.get('Accept-Language', ''), entetes=request.headers)
+
+@app.get('/api/heure')
+def api_heure():
+    maintenant = datetime.now(ZoneInfo('Europe/Paris'))
+    return jsonify({'heure': maintenant.strftime('%H:%M:%S'), 'date': maintenant.strftime('%d/%m/%Y'), 'message': 'Bonjour depuis mon API !'})
+
+@app.get('/horloge')
+def horloge():
+    return render_template('horloge.html')
+
+if __name__ == '__main__':
+    app.run(debug=False)
