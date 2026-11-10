@@ -1,0 +1,1 @@
+{% extends 'base.html' %}{% block title %}Loisirs{% endblock %}{% block content %}<section class="panel"><div class="eyebrow">MES PASSIONS</div><h1>Mes loisirs</h1><ul>{% for loisir in loisirs %}<li>{{ loisir }}</li>{% endfor %}</ul></section>{% endblock %}
