@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Darine | Web Fundamentals</title>
+
+<style>
+* {
+box-sizing: border-box;
+}
+
+body {
+margin: 0;
+font-family: Arial, sans-serif;
+background: #0b132b;
+color: white;
+}
+
+header {
+padding: 70px 20px;
+text-align: center;
+background: linear-gradient(135deg, #172554, #0f766e);
+}
+
+h1 {
+font-size: 42px;
+}
+
+.subtitle {
+color: #ccfbf1;
+font-size: 19px;
+}
+
+main {
+max-width: 1000px;
+margin: 40px auto;
+padding: 20px;
+}
+
+.card {
+background: #1c2541;
+padding: 25px;
+margin-bottom: 20px;
+border-radius: 15px;
+border: 1px solid #334155;
+}
+
+h2 {
+color: #5eead4;
+}
+
+button {
+background: #5eead4;
+border: none;
+padding: 12px 20px;
+border-radius: 8px;
+cursor: pointer;
+font-weight: bold;
+}
+
+button:hover {
+background: #2dd4bf;
+}
+
+footer {
+text-align: center;
+padding: 30px;
+color: #94a3b8;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+<h1>Welcome to Darine's Website</h1>
+<p class="subtitle">Web Fundamentals | ICAM Engineering School</p>
+<p>My first personalized website using Python, Flask and GitHub.</p>
+</header>
+
+<main>
+
+<div class="card">
+<h2>About Me</h2>
+<p>
+Hello! I'm Darine, an engineering student at ICAM.
+This website is part of my Web Fundamentals project.
+</p>
+</div>
+
+<div class="card">
+<h2>My Web Development Project</h2>
+<p>
+I'm learning how websites work using HTML, CSS,
+Python, Flask, GitHub and PythonAnywhere.
+</p>
+</div>
+
+<div class="card">
+<h2>Interactive Demonstration</h2>
+<p>Click the button to test JavaScript!</p>
+
+<button onclick="showMessage()">Click Me!</button>
+
+<p id="message"></p>
+</div>
+
+<div class="card">
+<h2>Technologies Used</h2>
+<p>HTML • CSS • JavaScript • Python • Flask • GitHub</p>
+</div>
+
+</main>
+
+<footer>
+<p>© 2026 Darine | Web Fundamentals Project</p>
+</footer>
+
+<script>
+function showMessage() {
+document.getElementById("message").innerText =
+"Congratulations! JavaScript is working!";
+}
+</script>
+
+</body>
+</html>
